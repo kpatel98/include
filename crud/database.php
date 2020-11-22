@@ -255,7 +255,7 @@ class Database{
     public function deleteQry($query)
     {
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
+        return $stmt->execute();
     }
  
  
