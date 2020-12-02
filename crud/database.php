@@ -174,14 +174,7 @@ class Database{
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $rows;
     }
-     
-    public function getRecFrmQryStr($query)
-    {
-        //echo $query;
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        return array();
-    }
+    
     public function getQueryCount($tableName, $field, $cond='')
     {
         $stmt = $this->pdo->prepare("SELECT count($field) as total FROM $tableName WHERE 1 ".$cond);
@@ -478,12 +471,10 @@ function fileUpload(array $data){
     if (array_key_exists("type",$data)){
         
         $type = explode(',', $data['type']);
-        if(!in_array($ftype, $type)){
+        if(in_array($ftype, $type)){
             $check['type'] = 1;
-            // print_r($check);
         }else{
             $check['type'] = 'only allow ('.$data['type'].') file !...';
-            print_r($check);
         }
         
     }else{
@@ -537,8 +528,11 @@ function fileUpload(array $data){
     }
 
     if ($check['type']==1 && $check['size']['minimum']==1 && $check['size']['maximum']==1) {
-        $fnewname =uniqid('img_',true).'.'.$ftype;
-
+        if(isset($data['save_name'])){
+          $fnewname = $data['save_name'].'.'.$ftype;
+        }else{
+          $fnewname =uniqid('img_',true).'.'.$ftype;
+        }
         $target_file = $target_dir. $fnewname;
         $data = array('name'=>$fnewname, 'path'=>$target_file, 'type'=>$ftype, 'size'=>join(" ",$sizedata['size']), 'error'=>$ferror);
 

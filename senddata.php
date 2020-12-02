@@ -21,7 +21,7 @@ function echoData($data){
 }
 
 function echoJson($data){
-    $json = json_encode($data);
+    $json = json_encode($data,JSON_NUMERIC_CHECK);
     echo $json;
     exit();
 }
@@ -32,7 +32,7 @@ function echoAr($array=''){
         print"\n</pre>";
     }
 
-function extractJson()
+function extractJson($case='')
 {
     global $conn;
     $req = array();
@@ -42,7 +42,11 @@ function extractJson()
          $req[] = $key;
     }
     foreach ($req as $key) {
-         $request[$key] = mysqli_real_escape_string($conn , $info->$key);
+         $value = mysqli_real_escape_string($conn , $info->$key);;
+         if ($case!=''){
+            $value = $case($value);
+         }
+         $request[$key] = $value;
     }  
     return $request;
 }
